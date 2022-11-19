@@ -77,6 +77,7 @@ export const RecordButton = styled(Button)({
   height: '75px',
   backgroundImage: 'linear-gradient(315deg, #0063cc 0%, #19a5fe 74%)',
   color: 'black',
+  fontSize: '1rem',
 })
 
 
