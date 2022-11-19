@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Button } from "@mui/material";
 
 export const getDesignTokens = (mode) => ({
   typography: {
@@ -12,9 +13,13 @@ export const getDesignTokens = (mode) => ({
     },
     title: {
       fontWeight: 800,
-      fontSize: "2.25em",
-      marginBottom: "0.8888889em",
-      lineHeight: "1.1111111rem",
+      fontSize: "6.25em",
+      lineHeight: "6.5rem",
+    },
+    subtitle: {
+      fontWeight: 400,
+      fontSize: "1.25em",
+      lineHeight: "2.5rem",
     },
   },
   palette: {
@@ -35,7 +40,7 @@ export const getDesignTokens = (mode) => ({
       : {
         // palette values for dark mode
         text: {
-          primary: "rgb(166, 182, 216)",
+          primary: "#FAFAFA",
           secondary: "rgb(179, 188, 203)",
           tertiary: "rgb(107 114 128)",
         },
@@ -52,7 +57,15 @@ export const AppWrapper = styled.div`
   padding-right: 2rem;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 12rem;
   max-width: 832px;
   flex-wrap: wrap;
   text-align: center;
 `;
+
+export const RecordButton = styled(Button)({
+  width: '300px',
+  height: '75px',
+  backgroundImage: 'linear-gradient(315deg, #0063cc 0%, #19a5fe 74%)',
+  color: 'black',
+})

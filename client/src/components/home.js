@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import io from "socket.io-client";
+import { Typography } from "@mui/material";
+import { RecordButton } from "./styles";
 
 let bufferSize = 2048,
   context,
@@ -172,11 +174,14 @@ function Home() {
 
   return (
     <div>
-      <h1>Ghostwriter Demo</h1>
-      <div>
-        <button onClick={isStreaming ? stop : start}>
+      <Typography variant="title">Ghostwriter</Typography>
+      <div style={{marginTop: '1rem'}}>
+        <Typography variant="subtitle">Rapping is a form of poetry, one to ease the mind and provide clarity. We are hacking the mental health space by giving literal poetic justice to users around the world.</Typography>
+      </div>
+      <div style={{marginTop: '2rem'}}>
+        <RecordButton onClick={isStreaming ? stop : start}>
           {isStreaming ? "pause" : "record"}
-        </button>
+        </RecordButton>
       </div>
       <div>
         {totalTranscript.map((singleTranscript, index) => (
