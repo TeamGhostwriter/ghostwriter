@@ -63,9 +63,20 @@ export const AppWrapper = styled.div`
   text-align: center;
 `;
 
+export const HeaderWrapper = styled.div`
+  position: fixed;
+  margin-top: 1.5rem;
+  margin-right: 2rem;
+  right: 0;
+  top: 0;
+  z-index: 50;
+`
+
 export const RecordButton = styled(Button)({
   width: '300px',
   height: '75px',
   backgroundImage: 'linear-gradient(315deg, #0063cc 0%, #19a5fe 74%)',
   color: 'black',
 })
+
+

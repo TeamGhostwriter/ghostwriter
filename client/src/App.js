@@ -2,6 +2,7 @@ import React, {useMemo, useState} from "react";
 import { AppWrapper, getDesignTokens } from "./components/styles";
 import Home from "./components/home";
 import {createTheme, CssBaseline, ThemeProvider, useMediaQuery} from "@mui/material";
+import Header from "./components/header";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {
@@ -30,6 +31,7 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <Header />
         <AppWrapper style={{backgroundColor: theme.palette.background.default}}>
           <Home />
         </AppWrapper>
