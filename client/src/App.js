@@ -52,25 +52,53 @@ const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
 function App() {
   const socket = useRef(null);
   const [transcript, setTranscript] = useState("");
-  const firstWord = transcript.split(" ")[0];
   const [newTranscript, setNewTranscript] = useState("");
   const [totalTranscript, setTotalTranscript] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [maxChars, setMaxChars] = useState(0);
 
   useEffect(() => {
     setupSocket();
   }, []);
 
   useEffect(() => {
-    if (firstWord !== newTranscript.split(" ")[0]) {
-      console.log("new", newTranscript);
+    const allWordsOld = transcript.trim().split(" ");
+    const allWordsNew = newTranscript.trim().split(" ");
+    const firstWordOld = allWordsOld[0];
+    const firstWordNew = allWordsNew[0];
+
+    // console.log("allWordsOld", allWordsOld);
+    // console.log("firstWordOld", firstWordOld);
+    // console.log("allWordsNew", allWordsNew);
+    // console.log("firstWordNew", firstWordNew);
+
+    // console.log(firstWordOld === firstWordNew);
+    if (firstWordOld === "" || firstWordNew === "") {
+      // console.log("case 1" + newTranscript);
+      console.log("I'M HERE");
       setTranscript(newTranscript);
+      return;
+    }
+
+    if (firstWordOld !== firstWordNew) {
+      // console.log("case 2" + newTranscript);
+      console.log(newTranscript);
+      if (allWordsOld.length > 2) {
+        setTotalTranscript([...totalTranscript, transcript]);
+      }
+      setTranscript(newTranscript);
+      setMaxChars(1);
     } else {
-      if (newTranscript.split(" ").length >= transcript.split(" ").length) {
-        console.log("same", newTranscript);
+      if (
+        allWordsNew.length >= allWordsOld.length &&
+        allWordsNew.length >= maxChars
+      ) {
+        setMaxChars(allWordsNew.length);
+        // console.log("case 3 old" + allWordsOld);
+        // console.log("case 3 new" + allWordsNew);
+
+        console.log(newTranscript);
         setTranscript(newTranscript);
-      } else {
-        console.log("nothing happened");
       }
     }
   }, [newTranscript]);
@@ -89,7 +117,7 @@ function App() {
     });
 
     socket.current.on("data", (data) => {
-      console.log("data received" + data);
+      // console.log("data received" + data);
       setNewTranscript(data);
     });
   };
@@ -156,6 +184,9 @@ function App() {
         </button>
       </div>
       <div>
+        {totalTranscript.map((singleTranscript, index) => (
+          <p key={index}>{singleTranscript}</p>
+        ))}
         <p>{transcript}</p>
       </div>
     </div>
