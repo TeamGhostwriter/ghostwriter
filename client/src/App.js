@@ -3,21 +3,15 @@ import "./App.css";
 import io from "socket.io-client";
 import logo from "./logo.svg";
 
+// IMPORTANT: if you are using this, you must rap well! Otherwise, the system will find out you
+// are a poser and will not work effectively. We are only here to amplify creativity.
+// 0*anything = 0
+
 let bufferSize = 2048,
   context,
   processor,
   input,
   globalStream;
-
-async function getRhymes(question) {
-  fetch("https://api.datamuse.com/words?rel_rhy=" + question)
-    .then((response) => response.json())
-    .then((data) =>
-      data.slice(0, 5).map((word) => {
-        console.log(word.word);
-      })
-    );
-}
 
 const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   if (outSampleRate === sampleRate) {
@@ -103,6 +97,20 @@ function App() {
     }
   }, [newTranscript]);
 
+  useEffect(() => {
+    async function getRhymes() {
+      const lastWord = transcript.split(" ").pop();
+      fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
+        .then((response) => response.json())
+        .then((data) =>
+          data.slice(0, 5).map((word) => {
+            console.log(word.word);
+          })
+        );
+    }
+    getRhymes();
+  }, [transcript]);
+
   const setupSocket = () => {
     socket.current = io("http://localhost:3001", {
       reconnection: true,
@@ -123,6 +131,9 @@ function App() {
   };
 
   const setup = async () => {
+    setNewTranscript("");
+    setTranscript("");
+    setTotalTranscript([]);
     context = new (window.AudioContext || window.webkitAudioContext)({
       // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
       latencyHint: "interactive",
