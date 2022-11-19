@@ -9,7 +9,7 @@ let bufferSize = 2048,
   input,
   globalStream;
 
-async function getAnswer(question) {
+async function getRhymes(question) {
   fetch("https://api.datamuse.com/words?rel_rhy=" + question)
     .then((response) => response.json())
     .then((data) =>
