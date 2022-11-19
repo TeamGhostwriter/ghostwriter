@@ -9,16 +9,6 @@ let bufferSize = 2048,
   input,
   globalStream;
 
-async function getRhymes(question) {
-  fetch("https://api.datamuse.com/words?rel_rhy=" + question)
-    .then((response) => response.json())
-    .then((data) =>
-      data.slice(0, 5).map((word) => {
-        console.log(word.word);
-      })
-    );
-}
-
 const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   if (outSampleRate === sampleRate) {
     return buffer;
@@ -103,6 +93,20 @@ function App() {
     }
   }, [newTranscript]);
 
+  useEffect(() => {
+    async function getRhymes() {
+      const lastWord = transcript.split(" ").pop();
+      fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
+        .then((response) => response.json())
+        .then((data) =>
+          data.slice(0, 5).map((word) => {
+            console.log(word.word);
+          })
+        );
+    }
+    getRhymes();
+  }, [transcript]);
+
   const setupSocket = () => {
     socket.current = io("http://localhost:3001", {
       reconnection: true,
@@ -123,6 +127,9 @@ function App() {
   };
 
   const setup = async () => {
+    setNewTranscript("");
+    setTranscript("");
+    setTotalTranscript([]);
     context = new (window.AudioContext || window.webkitAudioContext)({
       // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
       latencyHint: "interactive",
