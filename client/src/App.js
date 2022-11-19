@@ -69,6 +69,8 @@ function App() {
       if (newTranscript.split(" ").length >= transcript.split(" ").length) {
         console.log("same", newTranscript);
         setTranscript(newTranscript);
+      } else {
+        console.log("nothing happened");
       }
     }
   }, [newTranscript]);
