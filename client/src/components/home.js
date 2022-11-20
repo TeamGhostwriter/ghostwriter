@@ -50,8 +50,8 @@ const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   return result.buffer;
 };
 
-const sendAudioFile = async (file) => {
-  const formData = new URLSearchParams({ recording: file });
+const sendAudioFile = async (file, lyrics) => {
+  const formData = new URLSearchParams({ recording: file, lyrics: lyrics });
   return fetch("http://localhost:3001/api/recordings", {
     method: "POST",
     body: formData,
@@ -73,6 +73,7 @@ function Home() {
   const [uploaded, setUploaded] = useState(false);
   const [curBeat, setCurBeat] = useState(beat1);
   const [play, { stop: stopBeat }] = useSound(curBeat);
+  const [transcripts, setTranscripts] = useState(null);
 
   var rhymeSuggestions = {};
 
@@ -143,6 +144,13 @@ function Home() {
     }
     getRhymes();
   }, [transcript]);
+
+  const fetchRecordings = async () => {
+    const response = await fetch("http://localhost:3001/api/get/recordings");
+    const data = await response.json();
+    setTranscripts(data);
+    console.log(data);
+  };
 
   const setupSocket = () => {
     socket.current = io("http://localhost:3001", {
@@ -275,19 +283,40 @@ function Home() {
         ))}
         <h1>{transcript}</h1>
       </div>
-      {blobUrl ? (
+      {blob && blobUrl ? (
         <div>
           <div>
             <audio src={blobUrl} controls />
           </div>
           <Button
             onClick={() => {
-              sendAudioFile(blob);
+              sendAudioFile(blob, totalTranscript + transcript);
               setUploaded(true);
             }}
           >
             {uploaded ? "✔️" : "upload"}
           </Button>
+        </div>
+      ) : null}
+
+      <Button style={{ marginTop: "40px" }} onClick={fetchRecordings}>
+        Fetch Recordings
+      </Button>
+      {transcripts ? (
+        <div>
+          {transcripts.map((transcript, index) => (
+            <div
+              style={{
+                border: 2,
+                padding: 5,
+                borderColor: "#FFFFFF",
+                borderStyle: "double",
+                marginTop: 10,
+              }}
+            >
+              <p key={index}>{transcript.lyrics}</p>
+            </div>
+          ))}
         </div>
       ) : null}
     </div>

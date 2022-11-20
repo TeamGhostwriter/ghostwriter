@@ -37,7 +37,7 @@ app.get("/", (req, res) => res.send("Hello World!"));
 
 const sequelize = new Sequelize(process.env.DATABASE_URL);
 
-const Recording = sequelize.define("recordings", {
+const Recording = sequelize.define("transcripts", {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -46,6 +46,10 @@ const Recording = sequelize.define("recordings", {
   recording: {
     type: Sequelize.BLOB,
     allowNull: false,
+  },
+  lyrics: {
+    type: Sequelize.STRING,
+    allowNull: true,
   },
 });
 
@@ -57,8 +61,10 @@ app.get("/api/get/recordings", async (req, res) => {
 app.post("/api/recordings", async (req, res) => {
   try {
     await sequelize.sync();
+    console.log(req.body);
     const recording = await Recording.create({
       recording: req.body.recording,
+      lyrics: req.body.lyrics,
     });
     res.send(recording);
   } catch (err) {
