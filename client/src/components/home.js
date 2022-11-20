@@ -1,13 +1,24 @@
 import React, { useRef, useEffect, useState } from "react";
 import io from "socket.io-client";
-import { Typography } from "@mui/material";
+import { Typography, Button, Icon } from "@mui/material";
 import { RecordButton } from "./styles";
+import useSound from "use-sound";
+import beat1 from "../assets/beats/1.mp3";
+import beat2 from "../assets/beats/2.mp3";
+import beat3 from "../assets/beats/3.mp3";
+import beat4 from "../assets/beats/4.mp3";
+import beat5 from "../assets/beats/5.mp3";
+import beat6 from "../assets/beats/6.mp3";
+import beat7 from "../assets/beats/7.mp3";
+import beat8 from "../assets/beats/8.mp3";
 
 let bufferSize = 2048,
   context,
   processor,
   input,
   globalStream;
+
+const beats = [beat1, beat2, beat3, beat4, beat5, beat6, beat7, beat8];
 
 const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   if (outSampleRate === sampleRate) {
@@ -39,7 +50,7 @@ const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   return result.buffer;
 };
 
-const sendAudioFile = (file) => {
+const sendAudioFile = async (file) => {
   const formData = new URLSearchParams({ recording: file });
   return fetch("http://localhost:3001/api/recordings", {
     method: "POST",
@@ -57,6 +68,11 @@ function Home() {
   const [totalTranscript, setTotalTranscript] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [maxChars, setMaxChars] = useState(0);
+  const [blobUrl, setBlobUrl] = useState(null);
+  const [blob, setBlob] = useState(null);
+  const [uploaded, setUploaded] = useState(false);
+  const [curBeat, setCurBeat] = useState(beat1);
+  const [play, { stop: stopBeat }] = useSound(curBeat);
 
   var rhymeSuggestions = {};
 
@@ -86,7 +102,7 @@ function Home() {
     if (firstWordOld !== firstWordNew) {
       // console.log("case 2" + newTranscript);
       console.log(newTranscript);
-      if (allWordsOld.length > 4) {
+      if (allWordsOld.length > 3) {
         setTotalTranscript([...totalTranscript, transcript]);
       }
       setTranscript(newTranscript);
@@ -151,6 +167,10 @@ function Home() {
     setTranscript("");
     setNewTranscript("");
     setTotalTranscript([]);
+    setUploaded(false);
+    setBlobUrl(null);
+    setBlob(null);
+
     context = new (window.AudioContext || window.webkitAudioContext)({
       // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
       latencyHint: "interactive",
@@ -159,6 +179,7 @@ function Home() {
     processor.connect(context.destination);
     context.resume();
 
+    play();
     const stream = await navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => {
@@ -184,7 +205,8 @@ function Home() {
           const blob = new Blob(data, {
             type: "audio/mp3",
           });
-          sendAudioFile(blob);
+          setBlob(blob);
+          setBlobUrl(URL.createObjectURL(blob));
         });
 
         // Start the recording.
@@ -212,6 +234,8 @@ function Home() {
 
   const stop = () => {
     if (isStreaming) {
+      stopBeat();
+      setCurBeat(beats[Math.floor(Math.random() * beats.length)]);
       // stop record track from browser
       let track = globalStream.getTracks()[0];
       track.stop();
@@ -242,7 +266,7 @@ function Home() {
       </div>
       <div style={{ marginTop: "2rem" }}>
         <RecordButton onClick={isStreaming ? stop : start}>
-          {isStreaming ? "pause" : "record"}
+          {isStreaming ? "stop" : "play beat & record"}
         </RecordButton>
       </div>
       <div>
@@ -251,6 +275,21 @@ function Home() {
         ))}
         <h1>{transcript}</h1>
       </div>
+      {blobUrl ? (
+        <div>
+          <div>
+            <audio src={blobUrl} controls />
+          </div>
+          <Button
+            onClick={() => {
+              sendAudioFile(blob);
+              setUploaded(true);
+            }}
+          >
+            {uploaded ? "✔️" : "upload"}
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

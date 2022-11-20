@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const port = 3001;
 const server = require("http").Server(app);
 const io = require("socket.io")(server, {
@@ -8,7 +9,7 @@ const io = require("socket.io")(server, {
   },
 });
 const { Sequelize } = require("sequelize-cockroachdb");
-
+const bodyParser = require("body-parser");
 const speech = require("@google-cloud/speech");
 const client = new speech.SpeechClient();
 
@@ -24,13 +25,15 @@ const request = {
 
 let recognizeStream = null;
 
-app.get("/", (req, res) => res.send("Hello World!"));
-var bodyParser = require("body-parser");
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
+
+app.use(cors());
+
+app.get("/", (req, res) => res.send("Hello World!"));
 
 const sequelize = new Sequelize(process.env.DATABASE_URL);
 
