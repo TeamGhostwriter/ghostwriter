@@ -47,6 +47,8 @@ function Home() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [maxChars, setMaxChars] = useState(0);
 
+  var rhymeSuggestions = {};
+
   useEffect(() => {
     setupSocket();
   }, []);
@@ -95,14 +97,21 @@ function Home() {
 
   useEffect(() => {
     async function getRhymes() {
-      fetch(
-        "https://api.datamuse.com/words?rel_rhy=" + transcript.split(" ").pop()
-      )
+      const lastWord = transcript.split(" ").at(-1);
+      // //if the transcript has ever read in the current word
+      if (transcript.split(" ").slice(0, -1).includes(lastWord)) {
+        rhymeSuggestions[lastWord] += 5;
+      } else {
+        rhymeSuggestions[lastWord] = 0;
+      }
+      fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
         .then((response) => response.json())
         .then((data) =>
-          data.slice(0, 5).map((word) => {
-            console.log(word.word);
-          })
+          data
+            .slice(rhymeSuggestions[lastWord], rhymeSuggestions[lastWord] + 5)
+            .map((word) => {
+              console.log(word.word);
+            })
         );
     }
     getRhymes();
