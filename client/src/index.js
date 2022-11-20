@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './Home';
 import { BrowserRouter, Switch, Route, Routes } from "react-router-dom";
-import SocialPage from './pages/SocialPage';
+import SocialPage from './SocialPage';
 
 
 

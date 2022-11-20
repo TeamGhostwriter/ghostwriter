@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import Header from "../components/header";
+import Header from "./components/header";
 
 function SocialPage() {
   

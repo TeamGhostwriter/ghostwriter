@@ -3,7 +3,7 @@ import { accordionActionsClasses } from "@mui/material";
 import { BrowserRouter, Switch, Route, Routes } from "react-router-dom";
 import * as ReactDOM from "react-dom";
 import Home from "./Home.jsx";
-import SocialPage from "./pages/SocialPage";
+import SocialPage from "./SocialPage";
 import Project from "./components/Project.js";
 
 const App = () => {
