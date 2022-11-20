@@ -1,24 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
+import "./App.css";
 import io from "socket.io-client";
-import { Typography } from "@mui/material";
-import { RecordButton } from "./styles";
-import SuggestionHome from "./suggestionHome";
+import logo from "./logo.svg";
+
+// IMPORTANT: if you are using this, you must rap well! Otherwise, the system will find out you
+// are a poser and will not work effectively. We are only here to amplify creativity.
+// 0*anything = 0
 
 let bufferSize = 2048,
   context,
   processor,
   input,
   globalStream;
-
-async function getRhymes(question) {
-  fetch("https://api.datamuse.com/words?rel_rhy=" + question)
-    .then((response) => response.json())
-    .then((data) =>
-      data.slice(0, 5).map((word) => {
-        console.log(word.word);
-      })
-    );
-}
 
 const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   if (outSampleRate === sampleRate) {
@@ -50,7 +43,7 @@ const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   return result.buffer;
 };
 
-function Home() {
+function App() {
   const socket = useRef(null);
   const [transcript, setTranscript] = useState("");
   const [newTranscript, setNewTranscript] = useState("");
@@ -61,17 +54,6 @@ function Home() {
   useEffect(() => {
     setupSocket();
   }, []);
-
-  useEffect(() => {
-    if (isStreaming){
-      //if it is streaming, add and scroll to new page
-      console.log("Toggling the is streaming button");
-      <SuggestionHome/>
-    }else{
-      //if it is not streaming then go back to home page
-
-    }
-  }, [isStreaming])
 
   useEffect(() => {
     const allWordsOld = transcript.trim().split(" ");
@@ -115,6 +97,20 @@ function Home() {
     }
   }, [newTranscript]);
 
+  useEffect(() => {
+    async function getRhymes() {
+      const lastWord = transcript.split(" ").pop();
+      fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
+        .then((response) => response.json())
+        .then((data) =>
+          data.slice(0, 5).map((word) => {
+            console.log(word.word);
+          })
+        );
+    }
+    getRhymes();
+  }, [transcript]);
+
   const setupSocket = () => {
     socket.current = io("http://localhost:3001", {
       reconnection: true,
@@ -135,6 +131,9 @@ function Home() {
   };
 
   const setup = async () => {
+    setNewTranscript("");
+    setTranscript("");
+    setTotalTranscript([]);
     context = new (window.AudioContext || window.webkitAudioContext)({
       // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
       latencyHint: "interactive",
@@ -185,25 +184,24 @@ function Home() {
   };
 
   return (
-    <div>
-      <Typography variant="title">Ghostwriter</Typography>
-      <div style={{marginTop: '1rem'}}>
-        <Typography variant="subtitle">Rapping is a form of poetry, one to ease the mind and provide clarity. We are hacking the mental health space by giving literal poetic justice to users around the world.</Typography>
+    <div className="App">
+      <div>
+        <img src={logo} className="App-logo" alt="logo" />
       </div>
-      <div style={{marginTop: '2rem'}}>
-        <RecordButton onClick={isStreaming ? stop : start}>
+      <h1>Ghostwriter Demo</h1>
+      <div>
+        <button onClick={isStreaming ? stop : start}>
           {isStreaming ? "pause" : "record"}
-        </RecordButton>
-          {isStreaming ? <SuggestionHome isStream={isStreaming} stop={stop} start={start} totalTranscript={totalTranscript} transcript={transcript} /> : null}
+        </button>
       </div>
       <div>
         {totalTranscript.map((singleTranscript, index) => (
           <p key={index}>{singleTranscript}</p>
         ))}
-        <h1>{transcript}</h1>
+        <p>{transcript}</p>
       </div>
     </div>
   );
 }
 
-export default Home;
+export default App;
