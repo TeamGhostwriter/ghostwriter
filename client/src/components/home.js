@@ -9,16 +9,6 @@ let bufferSize = 2048,
   input,
   globalStream;
 
-async function getRhymes(question) {
-  fetch("https://api.datamuse.com/words?rel_rhy=" + question)
-    .then((response) => response.json())
-    .then((data) =>
-      data.slice(0, 5).map((word) => {
-        console.log(word.word);
-      })
-    );
-}
-
 const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   if (outSampleRate === sampleRate) {
     return buffer;
@@ -83,7 +73,7 @@ function Home() {
     if (firstWordOld !== firstWordNew) {
       // console.log("case 2" + newTranscript);
       console.log(newTranscript);
-      if (allWordsOld.length > 2) {
+      if (allWordsOld.length > 4) {
         setTotalTranscript([...totalTranscript, transcript]);
       }
       setTranscript(newTranscript);
@@ -102,6 +92,21 @@ function Home() {
       }
     }
   }, [newTranscript]);
+
+  useEffect(() => {
+    async function getRhymes() {
+      fetch(
+        "https://api.datamuse.com/words?rel_rhy=" + transcript.split(" ").pop()
+      )
+        .then((response) => response.json())
+        .then((data) =>
+          data.slice(0, 5).map((word) => {
+            console.log(word.word);
+          })
+        );
+    }
+    getRhymes();
+  }, [transcript]);
 
   const setupSocket = () => {
     socket.current = io("http://localhost:3001", {
@@ -123,6 +128,9 @@ function Home() {
   };
 
   const setup = async () => {
+    setTranscript("");
+    setNewTranscript("");
+    setTotalTranscript([]);
     context = new (window.AudioContext || window.webkitAudioContext)({
       // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
       latencyHint: "interactive",
@@ -175,10 +183,14 @@ function Home() {
   return (
     <div>
       <Typography variant="title">Ghostwriter</Typography>
-      <div style={{marginTop: '1rem'}}>
-        <Typography variant="subtitle">Rapping is a form of poetry, one to ease the mind and provide clarity. We are hacking the mental health space by giving literal poetic justice to users around the world.</Typography>
+      <div style={{ marginTop: "1rem" }}>
+        <Typography variant="subtitle">
+          Rapping is a form of poetry, one to ease the mind and provide clarity.
+          We are hacking the mental health space by giving literal poetic
+          justice to users around the world.
+        </Typography>
       </div>
-      <div style={{marginTop: '2rem'}}>
+      <div style={{ marginTop: "2rem" }}>
         <RecordButton onClick={isStreaming ? stop : start}>
           {isStreaming ? "pause" : "record"}
         </RecordButton>
