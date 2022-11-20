@@ -2,23 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 import io from "socket.io-client";
 import { Typography } from "@mui/material";
 import { RecordButton } from "./styles";
-import SuggestionHome from "./suggestionHome";
 
 let bufferSize = 2048,
   context,
   processor,
   input,
   globalStream;
-
-async function getRhymes(question) {
-  fetch("https://api.datamuse.com/words?rel_rhy=" + question)
-    .then((response) => response.json())
-    .then((data) =>
-      data.slice(0, 5).map((word) => {
-        console.log(word.word);
-      })
-    );
-}
 
 const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   if (outSampleRate === sampleRate) {
@@ -63,38 +52,19 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    if (isStreaming){
-      //if it is streaming, add and scroll to new page
-      console.log("Toggling the is streaming button");
-      <SuggestionHome/>
-    }else{
-      //if it is not streaming then go back to home page
-
-    }
-  }, [isStreaming])
-
-  useEffect(() => {
     const allWordsOld = transcript.trim().split(" ");
     const allWordsNew = newTranscript.trim().split(" ");
     const firstWordOld = allWordsOld[0];
     const firstWordNew = allWordsNew[0];
 
-    // console.log("allWordsOld", allWordsOld);
-    // console.log("firstWordOld", firstWordOld);
-    // console.log("allWordsNew", allWordsNew);
-    // console.log("firstWordNew", firstWordNew);
-
-    // console.log(firstWordOld === firstWordNew);
     if (firstWordOld === "" || firstWordNew === "") {
-      // console.log("case 1" + newTranscript);
       console.log("I'M HERE");
       setTranscript(newTranscript);
       return;
     }
 
     if (firstWordOld !== firstWordNew) {
-      // console.log("case 2" + newTranscript);
-      console.log(newTranscript);
+      console.log('newTranscript', newTranscript);
       if (allWordsOld.length > 2) {
         setTotalTranscript([...totalTranscript, transcript]);
       }
@@ -106,14 +76,12 @@ function Home() {
         allWordsNew.length >= maxChars
       ) {
         setMaxChars(allWordsNew.length);
-        // console.log("case 3 old" + allWordsOld);
-        // console.log("case 3 new" + allWordsNew);
 
-        console.log(newTranscript);
+        console.log('newTranscript', newTranscript);
         setTranscript(newTranscript);
       }
     }
-  }, [newTranscript]);
+  }, [newTranscript, maxChars, totalTranscript, transcript]);
 
   const setupSocket = () => {
     socket.current = io("http://localhost:3001", {
@@ -129,7 +97,6 @@ function Home() {
     });
 
     socket.current.on("data", (data) => {
-      // console.log("data received" + data);
       setNewTranscript(data);
     });
   };
@@ -151,6 +118,7 @@ function Home() {
     processor.onaudioprocess = (e) => {
       microphoneProcess(e);
     };
+    setIsStreaming(true);
   };
 
   const microphoneProcess = (e) => {
@@ -161,7 +129,10 @@ function Home() {
 
   const start = () => {
     setup();
-    setIsStreaming(true);
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   const stop = () => {
@@ -194,7 +165,6 @@ function Home() {
         <RecordButton onClick={isStreaming ? stop : start}>
           {isStreaming ? "pause" : "record"}
         </RecordButton>
-          {isStreaming ? <SuggestionHome isStream={isStreaming} stop={stop} start={start} totalTranscript={totalTranscript} transcript={transcript} /> : null}
       </div>
       <div>
         {totalTranscript.map((singleTranscript, index) => (

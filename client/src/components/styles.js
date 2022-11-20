@@ -14,7 +14,7 @@ export const getDesignTokens = (mode) => ({
     title: {
       fontWeight: 800,
       fontSize: "6.25em",
-      lineHeight: "6.5rem",
+      lineHeight: "8.5rem",
     },
     subtitle: {
       fontWeight: 400,
@@ -57,7 +57,8 @@ export const AppWrapper = styled.div`
   padding-right: 2rem;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 12rem;
+  margin-top: 15rem;
+  margin-bottom: 60rem;
   max-width: 832px;
   flex-wrap: wrap;
   text-align: center;
@@ -73,11 +74,14 @@ export const HeaderWrapper = styled.div`
 `
 
 export const RecordButton = styled(Button)({
+  position: 'fixed',
   width: '300px',
   height: '75px',
   backgroundImage: 'linear-gradient(315deg, #0063cc 0%, #19a5fe 74%)',
   color: 'black',
   fontSize: '1rem',
+  bottom: '12rem',
+  right: 450,
 })
 
 
