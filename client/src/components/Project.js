@@ -61,7 +61,7 @@ const sendAudioFile = async (file, lyrics) => {
   });
 };
 
-function Home() {
+function Project() {
   const socket = useRef(null);
   const [transcript, setTranscript] = useState("");
   const [newTranscript, setNewTranscript] = useState("");
@@ -323,4 +323,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Project;

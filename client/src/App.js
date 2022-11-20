@@ -1,43 +1,21 @@
-import React, {useMemo, useState} from "react";
-import { AppWrapper, getDesignTokens } from "./components/styles";
-import Home from "./components/home";
-import {createTheme, CssBaseline, ThemeProvider, useMediaQuery} from "@mui/material";
-import Header from "./components/header";
+// importing components from react-router-dom package
+import { accordionActionsClasses } from "@mui/material";
+import { BrowserRouter, Switch, Route, Routes } from "react-router-dom";
+import * as ReactDOM from "react-dom";
+import Home from "./Home.jsx";
+import SocialPage from "./pages/SocialPage";
+import Project from "./components/Project.js";
 
-export const ColorModeContext = React.createContext({
-  toggleColorMode: () => {
-  },
-});
-
-function App() {
-  const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
-  const [mode, setMode] = useState(
-    prefersLightMode ? "light" : "dark"
-  );
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) =>
-          prevMode === "light" ? "dark" : "light"
-        );
-      },
-    }),
-    []
-  );
-  console.log('mode', mode);
-  const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
-
+const App = () => {
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Header />
-        <AppWrapper style={{backgroundColor: theme.palette.background.default}}>
-          <Home />
-        </AppWrapper>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+      <div className="app">
+        <Routes> 
+          <Route path="/" element={<Project/>}/>
+          <Route path="/SocialPage" element={<SocialPage/>}/>
+        </Routes>
+      </div>
   );
-}
+};
 
+// ReactDOM.render(<App />, document.getElementById("root"));
 export default App;
