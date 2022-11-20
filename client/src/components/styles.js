@@ -21,6 +21,15 @@ export const getDesignTokens = (mode) => ({
       fontSize: "1.25em",
       lineHeight: "2.5rem",
     },
+    header1: {
+      display: 'block',
+      fontSize: '2em',
+      marginBlockStart: '0.67em',
+      marginBlockEnd: '0.67em',
+      marginInlineStart: '0px',
+      marginInlineEnd: '0px',
+      fontWeight: 'bold',
+    }
   },
   palette: {
     mode,
@@ -53,12 +62,16 @@ export const getDesignTokens = (mode) => ({
 });
 
 export const AppWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const HomeWrapper = styled.div`
   padding-left: 2rem;
   padding-right: 2rem;
   margin-left: auto;
   margin-right: auto;
   margin-top: 15rem;
-  margin-bottom: 60rem;
   max-width: 832px;
   flex-wrap: wrap;
   text-align: center;
@@ -71,7 +84,13 @@ export const HeaderWrapper = styled.div`
   right: 0;
   top: 0;
   z-index: 50;
-`
+`;
+
+export const RecordingWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 1rem auto 20rem;
+`;
 
 export const RecordButton = styled(Button)({
   position: 'fixed',

@@ -32,7 +32,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Header />
-        <AppWrapper style={{backgroundColor: theme.palette.background.default}}>
+        <AppWrapper>
           <Home />
         </AppWrapper>
       </ThemeProvider>

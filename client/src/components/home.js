@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import io from "socket.io-client";
 import { Typography } from "@mui/material";
-import { RecordButton } from "./styles";
+import {HomeWrapper, RecordButton} from "./styles";
+import Recording from "./recording";
 
 let bufferSize = 2048,
   context,
@@ -65,7 +66,7 @@ function Home() {
 
     if (firstWordOld !== firstWordNew) {
       console.log('newTranscript', newTranscript);
-      if (allWordsOld.length > 2) {
+      if (allWordsOld.length > 4) {
         setTotalTranscript([...totalTranscript, transcript]);
       }
       setTranscript(newTranscript);
@@ -82,6 +83,31 @@ function Home() {
       }
     }
   }, [newTranscript, maxChars, totalTranscript, transcript]);
+
+  /*
+  useEffect(() => {
+    async function getRhymes() {
+      const lastWord = transcript.split(" ").at(-1);
+      // //if the transcript has ever read in the current word
+      if (transcript.split(" ").slice(0, -1).includes(lastWord)) {
+        rhymeSuggestions[lastWord] += 5;
+      } else {
+        rhymeSuggestions[lastWord] = 0;
+      }
+      console.log("rhymeSuggestions", rhymeSuggestions);
+      fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
+        .then((response) => response.json())
+        .then((data) =>
+          data
+            .slice(rhymeSuggestions[lastWord], rhymeSuggestions[lastWord] + 5)
+            .map((word) => {
+              console.log("rhyme suggestion", word.word);
+            })
+        );
+    }
+    getRhymes();
+  }, [transcript]);
+   */
 
   const setupSocket = () => {
     socket.current = io("http://localhost:3001", {
@@ -102,6 +128,9 @@ function Home() {
   };
 
   const setup = async () => {
+    setTranscript("");
+    setNewTranscript("");
+    setTotalTranscript([]);
     context = new (window.AudioContext || window.webkitAudioContext)({
       // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
       latencyHint: "interactive",
@@ -118,7 +147,6 @@ function Home() {
     processor.onaudioprocess = (e) => {
       microphoneProcess(e);
     };
-    setIsStreaming(true);
   };
 
   const microphoneProcess = (e) => {
@@ -133,6 +161,7 @@ function Home() {
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
     });
+    setIsStreaming(true);
   };
 
   const stop = () => {
@@ -156,23 +185,30 @@ function Home() {
   };
 
   return (
-    <div>
-      <Typography variant="title">Ghostwriter</Typography>
-      <div style={{marginTop: '1rem'}}>
-        <Typography variant="subtitle">Rapping is a form of poetry, one to ease the mind and provide clarity. We are hacking the mental health space by giving literal poetic justice to users around the world.</Typography>
-      </div>
-      <div style={{marginTop: '2rem'}}>
-        <RecordButton onClick={isStreaming ? stop : start}>
-          {isStreaming ? "pause" : "record"}
-        </RecordButton>
-      </div>
-      <div>
-        {totalTranscript.map((singleTranscript, index) => (
-          <p key={index}>{singleTranscript}</p>
-        ))}
-        <h1>{transcript}</h1>
-      </div>
-    </div>
+    <>
+      <HomeWrapper>
+        <Typography variant="title">Ghostwriter</Typography>
+        <div style={{ marginTop: "1rem" }}>
+          <Typography variant="subtitle">
+            Rapping is a form of poetry, one to ease the mind and provide clarity.
+            We are hacking the mental health space by giving literal poetic
+            justice to users around the world.
+          </Typography>
+        </div>
+        <div style={{marginTop: '2rem'}}>
+          <RecordButton onClick={isStreaming ? stop : start}>
+            {isStreaming ? "pause" : "record"}
+          </RecordButton>
+        </div>
+        <div>
+          {totalTranscript.map((singleTranscript, index) => (
+            <p key={index}>{singleTranscript}</p>
+          ))}
+          {/*<h1>{transcript}</h1>*/}
+        </div>
+      </HomeWrapper>
+      <Recording transcript={transcript}/>
+    </>
   );
 }
 
