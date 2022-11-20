@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import io from "socket.io-client";
-import { Typography, Button, Icon } from "@mui/material";
+import { Typography, Button } from "@mui/material";
+import Suggestions from "./suggestions";
 import { RecordButton } from "./styles";
 import useSound from "use-sound";
 import beat1 from "../assets/beats/1.mp3";
@@ -19,6 +20,7 @@ let bufferSize = 2048,
   globalStream;
 
 const beats = [beat1, beat2, beat3, beat4, beat5, beat6, beat7, beat8];
+let rhymeSuggestions = {};
 
 const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   if (outSampleRate === sampleRate) {
@@ -74,8 +76,8 @@ function Project() {
   const [curBeat, setCurBeat] = useState(beat1);
   const [play, { stop: stopBeat }] = useSound(curBeat);
   const [transcripts, setTranscripts] = useState(null);
+  const [outputData, setOutputData] = useState([]);
 
-  var rhymeSuggestions = {};
 
   useEffect(() => {
     setupSocket();
@@ -123,27 +125,43 @@ function Project() {
     }
   }, [newTranscript]);
 
-  useEffect(() => {
-    async function getRhymes() {
-      const lastWord = transcript.split(" ").at(-1);
-      // //if the transcript has ever read in the current word
-      if (transcript.split(" ").slice(0, -1).includes(lastWord)) {
-        rhymeSuggestions[lastWord] += 5;
-      } else {
-        rhymeSuggestions[lastWord] = 0;
-      }
-      fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
-        .then((response) => response.json())
-        .then((data) =>
-          data
-            .slice(rhymeSuggestions[lastWord], rhymeSuggestions[lastWord] + 5)
-            .map((word) => {
-              console.log(word.word);
-            })
-        );
+
+  async function getRhymes(lastWord) {
+    // const lastWord = transcript.split(" ").at(-1);
+    // //if the transcript has ever read in the current word
+    // console.log(rhymeSuggestions);
+    // console.log('im straight', transcript.split(" ").slice(0, -1), lastWord);
+
+    //totalTranscript but as an array but i want to remove the element
+    if (totalTranscript.slice(0, -1).includes(lastWord)) {
+      console.log("IM GAY.")
+      rhymeSuggestions[lastWord] += 5;
+    } else {
+      rhymeSuggestions[lastWord] = 0;
     }
+    fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
+      .then((response) => response.json())
+      .then((data) =>
+        data
+          .slice(rhymeSuggestions[lastWord], rhymeSuggestions[lastWord] + 5)
+          .map((word, index) => {
+            // console.log(word.word);
+            /*
+            setOutputData([...outputData, {
+              word: lastWord,
+              suggestions: [...outputData[index].suggestions, word.word]
+            }])
+            */
+          })
+      );
+  }
+
+  /*
+  useEffect(() => {
     getRhymes();
+    console.log('outputData', outputData);
   }, [transcript]);
+   */
 
   const fetchRecordings = async () => {
     const response = await fetch(
@@ -283,11 +301,18 @@ function Project() {
         {totalTranscript.map((singleTranscript, index) => (
           <p key={index}>{singleTranscript}</p>
         ))}
-        <h1>{transcript}</h1>
+        {/*<h1>{transcript}</h1>*/}
+        <div style={{display: 'flex', flexDirection: 'row', marginLeft: 'auto', marginRight: 'auto', width: 400}}>
+          {transcript.split(" ").map((word) => (
+            <div style={{ marginRight: '1rem' }}>
+              <Suggestions word={word} />
+            </div>
+          ))}
+        </div>
       </div>
       {blob && blobUrl ? (
         <div>
-          <div>
+          <div style={{marginTop: '2rem'}}>
             <audio src={blobUrl} controls />
           </div>
           <Button
@@ -301,7 +326,7 @@ function Project() {
         </div>
       ) : null}
 
-      <Button style={{ marginTop: "40px" }} onClick={fetchRecordings}>
+      <Button style={{ marginTop: "1.5rem", marginBottom: '2rem' }} onClick={fetchRecordings}>
         Fetch Recordings
       </Button>
       {transcripts ? (
