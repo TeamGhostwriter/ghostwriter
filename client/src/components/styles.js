@@ -35,7 +35,6 @@ export const getDesignTokens = (mode) => ({
         background: {
           default: "#fff",
         },
-        divider: "rgb(229 231 235)",
       }
       : {
         // palette values for dark mode
@@ -47,7 +46,6 @@ export const getDesignTokens = (mode) => ({
         background: {
           default: "#1f1f1f",
         },
-        divider: "rgb(48, 48, 48)",
       }),
   },
 });
@@ -70,7 +68,12 @@ export const HeaderWrapper = styled.div`
   right: 0;
   top: 0;
   z-index: 50;
-`
+`;
+
+export const BeatsWrapper = styled.div`
+  margin-top: 3.5rem;
+  margin-right: 2rem;
+`;
 
 export const RecordButton = styled(Button)({
   width: '300px',
