@@ -39,6 +39,17 @@ const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
   return result.buffer;
 };
 
+const sendAudioFile = (file) => {
+  const formData = new URLSearchParams({ recording: file });
+  return fetch("http://localhost:3001/api/recordings", {
+    method: "POST",
+    body: formData,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    },
+  });
+};
+
 function Home() {
   const socket = useRef(null);
   const [transcript, setTranscript] = useState("");
@@ -148,14 +159,44 @@ function Home() {
     processor.connect(context.destination);
     context.resume();
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    globalStream = stream;
-    input = context.createMediaStreamSource(stream);
-    input.connect(processor);
+    const stream = await navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        // Collection for recorded data.
+        let data = [];
 
-    processor.onaudioprocess = (e) => {
-      microphoneProcess(e);
-    };
+        // Recorder instance using the stream.
+        // Also set the stream as the src for the audio element.
+        const recorder = new MediaRecorder(stream);
+
+        recorder.addEventListener("start", (e) => {
+          // Empty the collection when starting recording.
+          data.length = 0;
+        });
+
+        recorder.addEventListener("dataavailable", (event) => {
+          // Push recorded data to collection.
+          data.push(event.data);
+        });
+
+        // Create a Blob when recording has stopped.
+        recorder.addEventListener("stop", () => {
+          const blob = new Blob(data, {
+            type: "audio/mp3",
+          });
+          sendAudioFile(blob);
+        });
+
+        // Start the recording.
+        recorder.start();
+        globalStream = stream;
+        input = context.createMediaStreamSource(stream);
+        input.connect(processor);
+
+        processor.onaudioprocess = (e) => {
+          microphoneProcess(e);
+        };
+      });
   };
 
   const microphoneProcess = (e) => {

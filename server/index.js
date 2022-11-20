@@ -7,6 +7,7 @@ const io = require("socket.io")(server, {
     origin: "*",
   },
 });
+const { Sequelize } = require("sequelize-cockroachdb");
 
 const speech = require("@google-cloud/speech");
 const client = new speech.SpeechClient();
@@ -24,7 +25,43 @@ const request = {
 let recognizeStream = null;
 
 app.get("/", (req, res) => res.send("Hello World!"));
+var bodyParser = require("body-parser");
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
+const sequelize = new Sequelize(process.env.DATABASE_URL);
+
+const Recording = sequelize.define("recordings", {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  recording: {
+    type: Sequelize.BLOB,
+    allowNull: false,
+  },
+});
+
+app.get("/api/get/recordings", async (req, res) => {
+  const recordings = await Recording.findAll();
+  res.send(recordings);
+});
+
+app.post("/api/recordings", async (req, res) => {
+  try {
+    await sequelize.sync();
+    const recording = await Recording.create({
+      recording: req.body.recording,
+    });
+    res.send(recording);
+  } catch (err) {
+    console.log(err);
+  }
+});
 server.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
