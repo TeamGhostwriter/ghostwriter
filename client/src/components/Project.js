@@ -76,8 +76,7 @@ function Project() {
   const [curBeat, setCurBeat] = useState(beat1);
   const [play, { stop: stopBeat }] = useSound(curBeat);
   const [transcripts, setTranscripts] = useState(null);
-  const [outputData, setOutputData] = useState([]);
-
+  const [rhymes, setRhymes] = useState(null);
 
   useEffect(() => {
     setupSocket();
@@ -125,43 +124,33 @@ function Project() {
     }
   }, [newTranscript]);
 
-
-  async function getRhymes(lastWord) {
-    // const lastWord = transcript.split(" ").at(-1);
-    // //if the transcript has ever read in the current word
-    // console.log(rhymeSuggestions);
-    // console.log('im straight', transcript.split(" ").slice(0, -1), lastWord);
-
-    //totalTranscript but as an array but i want to remove the element
-    if (totalTranscript.slice(0, -1).includes(lastWord)) {
-      console.log("IM GAY.")
-      rhymeSuggestions[lastWord] += 5;
-    } else {
-      rhymeSuggestions[lastWord] = 0;
-    }
-    fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
-      .then((response) => response.json())
-      .then((data) =>
-        data
-          .slice(rhymeSuggestions[lastWord], rhymeSuggestions[lastWord] + 5)
-          .map((word, index) => {
-            // console.log(word.word);
-            /*
-            setOutputData([...outputData, {
-              word: lastWord,
-              suggestions: [...outputData[index].suggestions, word.word]
-            }])
-            */
-          })
-      );
-  }
-
-  /*
   useEffect(() => {
-    getRhymes();
-    console.log('outputData', outputData);
+    async function getRhymes(lastWord) {
+      // const lastWord = transcript.split(" ").at(-1);
+      // //if the transcript has ever read in the current word
+      // console.log(rhymeSuggestions);
+      // console.log('im straight', transcript.split(" ").slice(0, -1), lastWord);
+
+      //totalTranscript but as an array but i want to remove the element
+      if (totalTranscript.slice(0, -1).includes(lastWord)) {
+        rhymeSuggestions[lastWord] += 5;
+      } else {
+        rhymeSuggestions[lastWord] = 0;
+      }
+      await fetch("https://api.datamuse.com/words?rel_rhy=" + lastWord)
+        .then((response) => response.json())
+        .then((data) =>
+          setRhymes(
+            data.slice(
+              rhymeSuggestions[lastWord],
+              rhymeSuggestions[lastWord] + 5
+            )
+          )
+        );
+    }
+
+    getRhymes(transcript.split(" ").at(-1));
   }, [transcript]);
-   */
 
   const fetchRecordings = async () => {
     const response = await fetch(
@@ -287,9 +276,7 @@ function Project() {
       <Typography variant="title">Ghostwriter</Typography>
       <div style={{ marginTop: "1rem" }}>
         <Typography variant="subtitle">
-          Rapping is a form of poetry, one to ease the mind and provide clarity.
-          We are hacking the mental health space by giving literal poetic
-          justice to users around the world.
+          Your personalized AI freestyle assistant.
         </Typography>
       </div>
       <div style={{ marginTop: "2rem" }}>
@@ -301,18 +288,51 @@ function Project() {
         {totalTranscript.map((singleTranscript, index) => (
           <p key={index}>{singleTranscript}</p>
         ))}
-        {/*<h1>{transcript}</h1>*/}
-        <div style={{display: 'flex', flexDirection: 'row', marginLeft: 'auto', marginRight: 'auto', width: 400}}>
+        <h1>{transcript}</h1>
+
+        <h3
+          style={{
+            underline: "1",
+          }}
+        >
+          Rhymes
+        </h3>
+        <div
+        // style={{
+        //   display: "flex",
+        //   flexDirection: "column",
+        //   flexWrap: "wrap",
+        //   justifyContent: "space-around",
+        //   alignItems: "center",
+        // }}
+        >
+          {rhymes &&
+            rhymes.map((rhyme) => {
+              return <p>{rhyme.word}</p>;
+            })}
+        </div>
+        {/* <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            marginLeft: "auto",
+            marginRight: "auto",
+            width: 400,
+            maxWidth: "100%",
+            overflow: "cover",
+            justifyContent: "center",
+          }}
+        >
           {transcript.split(" ").map((word) => (
-            <div style={{ marginRight: '1rem' }}>
+            <div style={{ marginRight: "1rem" }}>
               <Suggestions word={word} />
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
       {blob && blobUrl ? (
         <div>
-          <div style={{marginTop: '2rem'}}>
+          <div style={{ marginTop: "2rem" }}>
             <audio src={blobUrl} controls />
           </div>
           <Button
@@ -326,8 +346,11 @@ function Project() {
         </div>
       ) : null}
 
-      <Button style={{ marginTop: "1.5rem", marginBottom: '2rem' }} onClick={fetchRecordings}>
-        Fetch Recordings
+      <Button
+        style={{ marginTop: "1.5rem", marginBottom: "2rem" }}
+        onClick={fetchRecordings}
+      >
+        See Other Freestyles
       </Button>
       {transcripts ? (
         <div>
