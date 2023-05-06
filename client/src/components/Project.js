@@ -54,7 +54,7 @@ const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
 
 const sendAudioFile = async (file, lyrics) => {
   const formData = new URLSearchParams({ recording: file, lyrics: lyrics });
-  return fetch("https://prod-ghostwriter.herokuapp.com/api/recordings", {
+  return fetch("http://localhost:3001/api/recordings", {
     method: "POST",
     body: formData,
     headers: {
@@ -153,16 +153,14 @@ function Project() {
   }, [transcript]);
 
   const fetchRecordings = async () => {
-    const response = await fetch(
-      "https://prod-ghostwriter.herokuapp.com/api/get/recordings"
-    );
+    const response = await fetch("http://localhost:3001/api/get/recordings");
     const data = await response.json();
     setTranscripts(data);
     console.log(data);
   };
 
   const setupSocket = () => {
-    socket.current = io("https://prod-ghostwriter.herokuapp.com/", {
+    socket.current = io("http://localhost:3001/", {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,

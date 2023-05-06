@@ -12,6 +12,7 @@ const { Sequelize } = require("sequelize-cockroachdb");
 const bodyParser = require("body-parser");
 const speech = require("@google-cloud/speech");
 const client = new speech.SpeechClient();
+const dotenv = require("dotenv").config();
 
 // Configure Transcription Request
 const request = {
@@ -35,7 +36,9 @@ app.use(cors());
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: "postgres",
+});
 
 const Recording = sequelize.define("transcripts", {
   id: {
