@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "crested-acumen-385615",
+  "private_key_id": "d8b279e5c54d252a8f8c8c3a31531a113d8b6a2a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDEGe67lXfAxk8Q\ntvDnBMF02VypkIo8pBnaHBmUUw+Yn7RSF8O6y5gAC9ewfgzJRzTNAzhI7BWjn45b\nozyN4JcmR9O96Jxhcsw00b0rc6wQIlt4Byx+S888orwGRVj9XKrTEI9OlyS2D6nC\na8fWZb8IA3y91jxUTmgohcfIzG/OSGqrZ+c2MQUgT0EwvQbjoeo5Jrmf3qA+ls0s\nFUzN8QxDKMfR1dX3w45p8QGc5Qp/rB8RmlYLyoC1tfuVY/TKyFNZTNvg9UT1J+So\n3YhJKsHd/kqEGrJrZzOdZPt9JtFgDWMoUhLydY5BNMGLrZDFh/A+BSi1z30Uk0Ox\nrxtFAxb/AgMBAAECggEADFRXErs4jsnJIdNmvReq9CZQcabRUjO9Hl4C67T3N5De\n/QRafY2cbnBQLNwYALW156fqq4cQazu2byOJxJ/Y0QLWGMwdvPDDTxTa0HcS2+bV\nGmxVC1HH41eV+8zzZeakJOYXJIlTOREuCrfNFjlKc/4II0VrgJ93ZAjZQVI9O1ps\n+tJ0PcqYMarB+YzjVn569yBBFSFsnV0EstmBhiAKtwbtcF8ENO+qVUwt0y+bNpAu\n8l2vd2yQMoQNX8Hu0aDmrIOIW2Jc2m1yMXJy6fMyZnk3q3oAt62jShhh+73YDWjU\nfDC6rTIaYW9N3pPE4Z6FozKmrNq9rnsGhrsa+6S5yQKBgQDypxcHsOTcKBJekAme\noNb9QfCcLo1jy3YVHl+PGh3jRMFnZdlqSo4TMZSDpoEJdG7WAkzSRHAW/SBo1BXm\nunQ2oiVIHgXMP+DkzF22nmOqKyQVvlZV9MzkVTZlLseYa/e9xiZZuAu4j4EraweM\nHdwk2grVGfztEf/O1Tijy02OlwKBgQDO41RxCorBWrbdk4HOAOLBIKMrHjhemjq3\nQQvb241GkAYd5RO2wv4rmt12g/RVpvh6Qyv50NtiSrHZOHK0uCecBZQvhcGjF7tz\nnPbVpkwuTYN/QJ184hATeAqMO85p/PH1ttaloZ9SkeFbLNErPl6VgvZD29ncQkaa\nbtQ8eBSv2QKBgGhK+NMNbNBTSNHsBrZvWvgvR0NZntutr2sUSu4uw3nTK21NkUzm\nDnqhbLvI7N0rdhf1lR8q2yKGWU+1GFS6/wgcWPnOLZ/ENN0iGYVMPnn9YN0XmfQH\n66iYF3EV0iPpA+pFKGaXfDIvO811iyDmFKCiNtWw/czHV7OGYXnE/+ixAoGBAMs/\nijWDpc1O0VfdEijPtfUFm0dA6SAHZKejv4K+rowj8d5srnFeH1W3Ttqfx+pdnr5+\nPzWtedmWiCJe0lG4mTEuSeZmAVW4eu+ZxOUf+reCby0UzaNic2itBa+/EYoOdaZv\neXA+18bGih6IaPWS0FkRz93anq1EbxhIyTiev7QBAoGBAJW0Rzngr5sXMvyXvrOo\n/wXH95JAp80ri2GUdCIK/9rxTbhUf+d3KLwtyP1YtO15DAVSwbTu2FIWNXoLbQCT\nO5QzmOgsXBk506+xTKQ7w6FIbfJb8VOaohfKaNl6YUNXJanl8ELP169B0uHyjR2T\nVah9N1AbmX72VoYNYznLXviI\n-----END PRIVATE KEY-----\n",
+  "client_email": "ghostwriter@crested-acumen-385615.iam.gserviceaccount.com",
+  "client_id": "107815173863781773666",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ghostwriter%40crested-acumen-385615.iam.gserviceaccount.com"
+}
